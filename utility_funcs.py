@@ -50,15 +50,6 @@ def copy_file(file_path, to_dir):
     shutil.copy(file_path, new_path)
 
 
-def extract_deal_id(path):
-    """Etracts Deal ID from file name"""
-    path = path.split(os.sep)[-1]       # Filename
-    deal_id = re.search(r'[0-9]{4,10}', path)
-    if bool(deal_id):
-        return deal_id.group()
-    return None
-
-
 def unzip_file(path_to_file):
     """Unzips file and returns path, if file cannot be unzipped the returns path."""
     try:
