@@ -6,7 +6,7 @@ from win32com.client import Dispatch
 import zipfile
 import re
 import pickle
-
+import sys
 
 """Nice functions that make life easier"""
 
@@ -94,3 +94,22 @@ def transfer_excel_data(agg_path, out_path, loss_trk_path):
     com_instance.Application.Run('FilePath')
     objworkbook.SaveAs(out_path)
     com_instance.Quit()
+    
+    
+def get_size(obj, seen=None):
+    """Recursively finds size of objects"""
+    size = sys.getsizeof(obj)
+    if seen is None:
+        seen = set()
+    obj_id = id(obj)
+    if obj_id in seen:
+        return 0
+    seen.add(obj_id)
+    if isinstance(obj, dict):
+        size += sum([get_size(v, seen) for v in obj.values()])
+        size += sum([get_size(k, seen) for k in obj.keys()])
+    elif hasattr(obj, '__dict__'):
+        size += get_size(obj.__dict__, seen)
+    elif hasattr(obj, '__iter__') and not isinstance(obj, (str, bytes, bytearray)):
+        size += sum([get_size(i, seen) for i in obj])
+    return size
